@@ -1,19 +1,29 @@
+import 'package:bucket_list_with_firebase/screen/HomePage.dart';
+import 'package:bucket_list_with_firebase/screen/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
-class AuthService extends GetxController {
-  User currentUser;
-  String userEmail;
+class AuthController extends GetxController {
+  static AuthController instance = Get.find();
+  Rxn<User>? user;
+  FirebaseAuth authentication = FirebaseAuth.instance;
 
-  User? getCurrentUser() {
-    return FirebaseAuth.instance.currentUser;
+  @override
+  void onReady() {
+    super.onReady();
+    user = Rxn<User>(authentication.currentUser);
+    user?.bindStream(authentication.userChanges());
+    ever(user!, _moveToPage);
   }
 
-  AuthService() {
-    currentUser = getCurrentUser()!;
-    userEmail = currentUser.email!;
+  _moveToPage(User? user) {
+    if (user == null) {
+      Get.offAll(LoginPage());
+    } else {
+      Get.offAll(HomePage());
+    }
   }
 
   void signUp({
@@ -22,19 +32,8 @@ class AuthService extends GetxController {
     required Function onSuccess, // 가입 성공시 호출되는 함수
     required Function(String err) onError, // 에러 발생시 호출되는 함수
   }) async {
-    // 회원가입
-    // 이메일 및 비밀번호 입력 여부 확인
-    if (email.isEmpty) {
-      onError("이메일을 입력해 주세요.");
-      return;
-    } else if (password.isEmpty) {
-      onError("비밀번호를 입력해 주세요.");
-      return;
-    }
-
-    // firebase auth 회원 가입
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      await authentication.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -79,13 +78,12 @@ class AuthService extends GetxController {
 
     // 로그인 시도
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await authentication.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
       onSuccess(); // 성공 함수 호출
-      notifyListeners(); // 로그인 상태 변경 알림
     } on FirebaseAuthException catch (e) {
       // firebase auth 에러 발생
       onError(e.message!);
@@ -97,7 +95,6 @@ class AuthService extends GetxController {
 
   void signOut() async {
     // 로그아웃
-    await FirebaseAuth.instance.signOut();
-    notifyListeners(); // 로그인 상태 변경 알림
+    await authentication.signOut();
   }
 }
