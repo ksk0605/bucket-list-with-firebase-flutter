@@ -1,4 +1,5 @@
 import 'package:bucket_list_with_firebase/controller/auth_controller.dart';
+import 'package:bucket_list_with_firebase/screen/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -65,11 +66,11 @@ class _LoginPageState extends State<LoginPage> {
                       content: Text("로그인 성공"),
                     ));
 
-                    // // HomePage로 이동
-                    // Navigator.pushReplacement(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => HomePage()),
-                    // );
+                    // HomePage로 이동
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => HomePage()),
+                    );
                   },
                   onError: (err) {
                     // 에러 발생

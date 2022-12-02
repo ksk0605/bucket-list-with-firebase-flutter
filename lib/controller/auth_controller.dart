@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/get_state_manager.dart';
 
 class AuthController extends GetxController {
-  static AuthController instance = Get.find();
+  // static AuthController instance = Get.find();
   Rxn<User>? user;
   FirebaseAuth authentication = FirebaseAuth.instance;
 

@@ -11,8 +11,10 @@ import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // main 함수에서 async 사용하기 위함
-  await Firebase.initializeApp()
-      .then((value) => Get.put(AuthController())); // firebase 앱 시작
+  await Firebase.initializeApp().then((value) {
+    Get.put(AuthController());
+    Get.lazyPut(() => (BucketController()));
+  }); // firebase 앱 시작
   runApp(const MyApp());
 }
 
